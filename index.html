@@ -1,7 +1,16 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl"><head><meta charset="utf-8">
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta name="ms-sp-authoring-source" content="agent"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Electro - חשמל מאפס להנדסה</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="לימוד חשמל מאפס ועד לרמת הנדסה">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Electro">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
 <style>
 :root{--bg:#f6f8fc;--card:#fff;--fg:#1c2333;--mut:#667085;--bd:#e1e6ef;--ac:#2f6bff;--ok:#16a34a;--bad:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111520;--card:#1b2130;--fg:#eef1f8;--mut:#9aa4b8;--bd:#2c3446;--ac:#6b93ff;--ok:#4ade80;--bad:#f87171}}
@@ -146,4 +155,6 @@ R.prog=function(){var l=lv(),p=(S.xp%15)/15*100,h='<div class="card"><h2>🏆 Le
  ks.forEach(function(k){var o=S.st[k],a=Math.round(o.r/o.t*100),w=o.t>=2&&a<60;h+='<p>'+k+': '+o.r+'/'+o.t+' ('+a+'%) '+(w?"⚠️ כדאי לחזק":a>=80?"✅":"")+'</p><div class="bar"><i style="width:'+a+'%"></i></div>'});
  var n=LS.filter(function(x,i){return S.seen["l"+i]}).length;h+='</div><div class="card"><p>שיעורים שהושלמו: <b>'+n+' מתוך '+LS.length+'</b></p></div>';$("v").innerHTML=h};
 shell();draw();
-</script></body></html>
+</script>
+
+</body></html>
