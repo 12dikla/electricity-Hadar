@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Electro - חשמל מאפס להנדסה</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--fg:#1c2333;--mut:#667085;--bd:#e1e6ef;--ac:#2f6bff;--ok:#16a34a;--bad:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111520;--card:#1b2130;--fg:#eef1f8;--mut:#9aa4b8;--bd:#2c3446;--ac:#6b93ff;--ok:#4ade80;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#111520;--card:#1b2130;--fg:#eef1f8;--mut:#9aa4b8;--bd:#2c3446;--ac:#6b93ff;--ok:#4ade80;--bad:#f87171}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.6;padding-bottom:76px}
+#app{max-width:680px;margin:0 auto;padding:12px}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:18px}
+.chip{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:2px 12px;font-size:13px;font-weight:700}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.modes button{font-size:12px;padding:8px 4px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg);cursor:pointer}
+.modes button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin:10px 0}
+h2{font-size:20px;margin:2px 0 6px}h3{font-size:16px;margin:2px 0}p{margin:6px 0}.mut{color:var(--mut);font-size:13px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:12px;padding:9px 16px;font-weight:600}
+.btn.g{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.it{display:flex;gap:10px;align-items:center;width:100%;text-align:right;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:12px;padding:10px;margin:6px 0}
+.it.lk{opacity:.5;cursor:default}.it b{display:block}
+.opt{display:block;width:100%;text-align:right;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:12px;padding:10px;margin:6px 0}
+.opt.ok{border-color:var(--ok)}.opt.bad{border-color:var(--bad)}
+.fb{margin-top:8px;padding:10px;border-radius:10px;background:var(--bg);border:1px solid var(--bd)}
+canvas{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;border:1px solid var(--bd)}
+input[type=range]{width:100%;accent-color:var(--ac)}
+input[type=number],textarea{font:inherit;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:10px;padding:8px;width:100%;direction:ltr;text-align:left}
+textarea{direction:rtl;text-align:right}
+.cmp{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd)}
+.num{font-weight:700;direction:ltr;min-width:60px;text-align:left}
+.bar{height:8px;background:var(--bd);border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.f{direction:ltr;display:inline-block;background:var(--bg);border:1px solid var(--bd);padding:1px 8px;border-radius:8px;font-weight:600}
+pre{direction:ltr;text-align:left;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8px;overflow-x:auto;font-size:13px;line-height:1.3}
+.m{padding:8px 12px;border-radius:12px;margin:6px 0;max-width:92%}.m.u{background:var(--ac);color:#fff;margin-inline-start:auto}.m.a{background:var(--card);border:1px solid var(--bd)}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;background:none;border:0;color:var(--mut);font-size:10px;padding:4px 0}nav button.on{color:var(--ac);font-weight:700}nav span{display:block;font-size:20px}
+</style></head><body><div id="app"></div>
+<script>
+var D=document,M=0,T="learn",LI=-1,raf=0,S={xp:0,st:{},seen:{}};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem("ee")||"{}"))}catch(e){}
+function $(i){return D.getElementById(i)}
+function sv(){try{localStorage.setItem("ee",JSON.stringify(S))}catch(e){}}
+function lv(){return 1+Math.floor(S.xp/15)}
+function xp(n){S.xp+=n;sv();$("chip").textContent="Level "+lv()+" · "+S.xp+" XP"}
+function rec(t,ok){var o=S.st[t]||(S.st[t]={r:0,t:0});o.t++;if(ok)o.r++;sv()}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+var LS=[
+{l:1,t:"חוק אוהם",tx:["זרם זורם כמו מים בצינור. מתח = לחץ המים, התנגדות = צינור צר. יותר לחץ נותן יותר זרם, וצינור צר נותן פחות זרם.","חוק אוהם: ברכיב אוהמי היחס בין המתח עליו לזרם דרכו קבוע, וזו ההתנגדות R. בנורת להט הקשר לא ליניארי, כי R עולה עם הטמפרטורה.","<span class=f>V = I·R ⇒ I = V/R</span><br>הספק: <span class=f>P = V·I = I²R = V²/R</span><br>דוגמה: 12V על 100Ω ⇒ I = 0.12A, P = 1.44W."]},
+{l:5,t:"טורי ומקבילי",tx:["בטור יש שביל אחד: אותו זרם עובר בכל הרכיבים. במקביל יש כמה שבילים, ולכל שביל אותה דחיפה (אותו מתח).","במקביל כל הענפים מחוברים לאותן שתי צמתים, ולכן הפרש הפוטנציאל זהה. בטור הזרם זהה והמתח מתחלק לפי ההתנגדויות.","טור: <span class=f>R = R₁+R₂</span><br>מקביל: <span class=f>1/R = 1/R₁+1/R₂</span><br>מחלק מתח: <span class=f>Vout = Vin·R₂/(R₁+R₂)</span>"]},
+{l:10,t:"חוקי קירכהוף",tx:["KCL: כמה זרם נכנס לצומת, כך יוצא. KVL: בסיבוב שלם במעגל, כל מה שהסוללה נותנת הנגדים לוקחים.","KCL נובע משימור מטען בצומת. KVL נובע מכך שהשדה החשמלי משמר: אין עבודה נטו בלולאה סגורה. זה הבסיס לשיטות צמתים ולולאות.","<span class=f>ΣI_in = ΣI_out</span> בצומת<br><span class=f>ΣV = 0</span> בלולאה<br>דוגמה: 10V = I·(R₁+R₂) ⇒ I = 10/(R₁+R₂)."]},
+{l:15,t:"קבלים",tx:["קבל הוא מאגר מים קטן: הוא מתמלא לאט דרך נגד ומתרוקן לאט.","בקבל I = C·dV/dt. מעגל RC מגיב מעריכית עם קבוע זמן τ = RC. אחרי 5τ הוא כמעט במצב יציב.","<span class=f>v(t) = V(1−e^(−t/RC))</span>, <span class=f>τ = RC</span><br>אחרי τ: 63.2%, אחרי 5τ: 99.3%. אנרגיה: <span class=f>E = ½CV²</span>"]},
+{l:20,t:"זרם חילופין (AC)",tx:["בבית החשמל משנה כיוון 50 פעמים בשנייה (50Hz). לכן מדברים על ערך אפקטיבי.","הערך האפקטיבי (RMS) שווה לזרם DC שמפזר אותו הספק. בקבל ובסליל יש הפרש פאזה בין מתח לזרם, ולכן עובדים עם עכבה Z.","<span class=f>V_rms = Vp/√2</span> (230V ⇒ Vp ≈ 325V)<br><span class=f>ω = 2πf</span>, <span class=f>Z_R=R, Z_C=1/(jωC), Z_L=jωL</span>"]}];
+var LK=["25 דיודות","30 טרנזיסטורים","35 מגברים שרתיים (Op-Amps)","40 אלקטרוניקה דיגיטלית","50 מערכות תלת־פאזיות","60 מנועים ושנאים","70 בקרה","80 אותות ומערכות","90 אלקטרוניקת הספק","100 אתגר הנדסי 🎓"];
+var Q=[
+["אוהם","12V על נגד 4Ω. מה הזרם?",["3A","48A","8A"],0,"מתח חלקי התנגדות: זרם = 12 לחלק ל־4.","I = V/R = 12/4 = 3A"],
+["אוהם","מגדילים את R כשהמתח קבוע. מה קורה לזרם?",["קטן","גדל","לא משתנה"],0,"צינור צר יותר, פחות זרם.","I = V/R: מכנה גדל ⇒ I קטן"],
+["אוהם","12V על 6Ω. מה ההספק?",["24W","2W","72W"],0,"הספק הוא מתח כפול זרם. הזרם 2A.","P = V²/R = 144/6 = 24W"],
+["טורי/מקבילי","שני נגדים של 10Ω במקביל. מה ההתנגדות השקולה?",["5Ω","20Ω","10Ω"],0,"שני שבילים נותנים יותר מקום לזרם, אז ההתנגדות קטנה מכל אחד.","R = 10·10/(10+10) = 5Ω"],
+["קירכהוף","לצומת נכנסים 3A ו־5A, ויוצא 2A בענף אחד. כמה זרם יוצא בענף השני?",["6A","0A","10A"],0,"כמה שנכנס, כך יוצא: 8A נכנסים.","KCL: 3+5 = 2+x ⇒ x = 6A"],
+["קבלים","אחרי קבוע זמן אחד (τ) בטעינת קבל, הוא טעון בערך ב־",["63%","100%","37%"],0,"הטעינה מהירה בהתחלה והולכת ומאטה.","1−e^(−1) ≈ 0.632"],
+["AC","מתח רשת 230V RMS. מה המתח המרבי Vp?",["325V","163V","230V"],0,"המרבי גבוה מהאפקטיבי פי שורש 2.","Vp = 230·√2 ≈ 325V"]];
+var C=[
+["⭐","מקור 12V מחובר לנגד 4Ω. מה הזרם? (A)",3,"I = V / R","I = 12/4 = 3A"],
+["⭐⭐","9V על שני נגדים בטור: 100Ω ו־220Ω. מה הזרם? (mA)",28.125,"קודם חברו את ההתנגדויות בטור.","R = 320Ω ⇒ I = 9/320 = 28.1mA"],
+["⭐⭐","שני נגדים במקביל: 60Ω ו־30Ω. מה ההתנגדות השקולה? (Ω)",20,"מכפלה חלקי סכום.","R = 60·30/90 = 20Ω"],
+["⭐⭐⭐","מחלק מתח: Vin = 10V, R₁ = 1kΩ, R₂ = 3kΩ. מה Vout על R₂? (V)",7.5,"המתח מתחלק ביחס להתנגדויות.","Vout = 10·3/(1+3) = 7.5V"],
+["⭐⭐⭐","בצומת נכנסים 3A ו־5A, ויוצאים 2A ועוד ענף אחד. כמה זרם יוצא בענף? (A)",6,"KCL.","3+5 = 2+x ⇒ x = 6A"],
+["⭐⭐⭐⭐","RC: R = 10kΩ, C = 100µF, מקור 10V. מה המתח על הקבל אחרי t = τ? (V)",6.32,"חשבו τ = RC, ואז e^(−1).","τ = 10⁴·10⁻⁴ = 1s ⇒ v = 10(1−e^(−1)) = 6.32V"],
+["⭐⭐⭐⭐","מתח רשת 230V RMS. מה המתח המרבי Vp? (V)",325.3,"הכפלה בשורש 2.","Vp = 230·√2 = 325.3V"]];
+var MN=["👶 הסבר לי בפשטות","🎓 הסבר לי כמו סטודנט להנדסת חשמל","🧮 הראה לי את המתמטיקה"];
+var TB=[["learn","🏠","Learn"],["lab","⚡","Lab"],["chal","🎯","Challenge"],["quiz","🧠","Quiz"],["tutor","🤖","AI Tutor"],["prog","🏆","Progress"]];
+$("app").innerHTML='<div class="top"><b>⚡ Electro</b><span class="chip" id="chip"></span></div><div class="modes" id="modes"></div><div id="v"></div><nav id="nav"></nav>';
+function shell(){$("modes").innerHTML=MN.map(function(x,i){return'<button class="'+(i==M?"on":"")+'" onclick="M='+i+';shell();draw()">'+x+'</button>'}).join("");
+ $("nav").innerHTML=TB.map(function(t){return'<button class="'+(t[0]==T?"on":"")+'" onclick="T=\''+t[0]+'\';LI=-1;shell();draw()"><span>'+t[1]+'</span>'+t[2]+'</button>'}).join("");xp(0)}
+function draw(){cancelAnimationFrame(raf);R[T]();window.scrollTo(0,0)}
+var R={};
+R.learn=function(){var h="";
+ if(LI>=0){var l=LS[LI];h='<button class="btn g" onclick="LI=-1;draw()">→ חזרה</button><div class="card"><p class="mut">Level '+l.l+'</p><h2>'+l.t+'</h2><p>'+l.tx[M]+'</p><div class="row"><button class="btn" onclick="seen('+LI+')">'+(S.seen["l"+LI]?"✓ הבנתי":"הבנתי (+5 XP)")+'</button><button class="btn g" onclick="T=\'lab\';shell();draw()">נסו במעבדה</button></div></div>'}
+ else{h='<div class="card"><h2>🏠 מסלול הלימוד</h2><p class="mut">מהיסודות ועד הנדסה. החומר זהה בשלושת המצבים, רק רמת ההסבר משתנה.</p>';
+  LS.forEach(function(l,i){h+='<button class="it" onclick="LI='+i+';draw()"><span>'+(S.seen["l"+i]?"✅":"📘")+'</span><span><b>Level '+l.l+': '+l.t+'</b></span></button>'});
+  LK.forEach(function(x){h+='<div class="it lk"><span>🔒</span><span><b>Level '+x+'</b><span class="mut">בקרוב</span></span></div>'});h+='</div>'}
+ $("v").innerHTML=h};
+function seen(i){if(!S.seen["l"+i]){S.seen["l"+i]=1;xp(5)}draw()}
+/* ---- circuit canvas ---- */
+function pt(d){d=((d%720)+720)%720;return d<240?[40+d,30]:d<360?[280,30+d-240]:d<600?[280-(d-360),150]:[40,150-(d-600)]}
+function run(g){var c=$("cv").getContext("2d"),o=0,l=performance.now();
+ function f(n){var d=Math.min(.05,(n-l)/1e3);l=n;var s=g(),cs=getComputedStyle(D.body),fg=cs.getPropertyValue("--fg"),ac=cs.getPropertyValue("--ac"),bg=cs.backgroundColor;
+  c.clearRect(0,0,320,180);c.strokeStyle=fg;c.lineWidth=3;c.strokeRect(40,30,240,120);
+  c.fillStyle=bg;c.fillRect(30,72,20,36);c.beginPath();c.moveTo(26,80);c.lineTo(54,80);c.moveTo(33,100);c.lineTo(47,100);c.stroke();
+  var x=160,y=30;c.beginPath();c.arc(x,y,14,0,7);c.fillStyle=bg;c.fill();
+  if(s.b>0){var q=c.createRadialGradient(x,y,2,x,y,32);q.addColorStop(0,"rgba(255,200,40,"+s.b+")");q.addColorStop(1,"rgba(255,200,40,0)");c.fillStyle=q;c.beginPath();c.arc(x,y,32,0,7);c.fill()}
+  c.beginPath();c.arc(x,y,14,0,7);c.stroke();
+  o+=s.v*d;c.fillStyle=ac;if(s.v>0)for(var i=0;i<30;i++){var p=pt(o+i*24);c.beginPath();c.arc(p[0],p[1],3.5,0,7);c.fill()}
+  raf=requestAnimationFrame(f)}raf=requestAnimationFrame(f)}
+/* ---- lab ---- */
+var LB=[{t:"bat",v:12},{t:"res",v:100},{t:"bulb",v:50}],LC={v:0,b:0};
+var IC={bat:"🔋 מקור מתח",res:"〰️ נגד",bulb:"💡 נורה (50Ω)",sw:"🔘 מפסק"};
+function fm(i,u){return(Math.abs(i)<1?(i*1000).toFixed(1)+" m":i.toFixed(2)+" ")+u}
+R.lab=function(){$("v").innerHTML='<div class="card"><canvas id="cv" width="320" height="180"></canvas><div class="row">'+["bat","res","bulb","sw"].map(function(t){return'<button class="btn g" onclick="LB.push({t:\''+t+'\',v:'+(t=="bat"?9:t=="res"?100:1)+',on:1});lb()">+ '+IC[t].split(" ")[0]+'</button>'}).join("")+'</div><div id="lst"></div></div><div class="card"><h3>📟 Multimeter</h3><div id="mm"></div></div><div class="card"><button class="btn" onclick="pred()">🎯 אתגר ניחוש</button><div id="pm" class="fb" style="display:none"></div></div><p class="mut">הוסיפו רכיבים בלחיצה. הרכיבים מחוברים בטור. שינוי ערכים מעדכן את הזרם מיד.</p>';
+ lb();run(function(){return LC})};
+function lb(){var h="";LB.forEach(function(c,i){var ctl=c.t=="bat"?'<input type=range min=1 max=24 value='+c.v+' oninput="LB['+i+'].v=+this.value;lu()">':c.t=="res"?'<input type=range min=10 max=1000 step=10 value='+c.v+' oninput="LB['+i+'].v=+this.value;lu()">':c.t=="sw"?'<button class="btn g" id="sw'+i+'" onclick="LB['+i+'].on=!LB['+i+'].on;lu()"></button>':'<span></span>';
+ h+='<div class="cmp"><span>'+IC[c.t]+'</span>'+ctl+'<span class="num" id="n'+i+'"></span><button class="btn g" onclick="LB.splice('+i+',1);lb()">✕</button></div>'});
+ $("lst").innerHTML=h;lu()}
+function lu(){var Vs=0,Rt=0,open=0;LB.forEach(function(c){if(c.t=="bat")Vs+=c.v;else if(c.t=="res")Rt+=c.v;else if(c.t=="bulb")Rt+=50;else if(!c.on)open=1});
+ var I=(open||Rt==0)?0:Vs/Rt,mm='<p>מתח מקור: <b>'+Vs+' V</b> · התנגדות כוללת: <b>'+Rt+' Ω</b></p><p>זרם: <b class=f>'+fm(I,"A")+'</b>'+(Rt==0&&Vs>0?" ⚠️ קצר! אין התנגדות":"")+(open?" (מעגל פתוח)":"")+'</p>',b=0;
+ LB.forEach(function(c,i){var e=$("n"+i);if(!e)return;var r=c.t=="res"?c.v:c.t=="bulb"?50:0;
+  if(c.t=="bat")e.textContent=c.v+" V";else if(c.t=="sw"){e.textContent="";$("sw"+i).textContent=c.on?"סגור":"פתוח"}else{e.textContent=c.t=="res"?c.v+" Ω":"";mm+='<p class=mut>V על '+IC[c.t].split(" ")[1]+': <b>'+(I*r).toFixed(2)+' V</b> · P: '+(I*I*r).toFixed(3)+' W</p>';if(c.t=="bulb")b=Math.max(b,Math.min(1,I*I*r/0.5))}});
+ $("mm").innerHTML=mm;LC={v:Math.min(I*300,300),b:b}}
+function pred(){LB=[{t:"bat",v:12},{t:"res",v:100},{t:"bulb",v:50}];lb();var e=$("pm");e.style.display="block";
+ e.innerHTML='<p>12V ← נגד 100Ω ← נורה. הזרם עכשיו 80mA.<br><b>מה יקרה לזרם אם נגדיל את הנגד ל־200Ω?</b></p><div class="row"><button class="btn g" onclick="pa(1)">יגדל</button><button class="btn g" onclick="pa(2)">יקטן</button><button class="btn g" onclick="pa(3)">לא ישתנה</button></div>'}
+function pa(k){LB[1].v=200;lb();$("pm").innerHTML=(k==2?"✅ נכון! ":"❌ לא בדיוק. ")+'הזרם ירד מ־80mA ל־48mA. <span class=f>I = 12/(200+50)</span> ' + (k==2?"(+10 XP)":"(+3 XP)");xp(k==2?10:3);rec("אוהם",k==2)}
+/* ---- challenge ---- */
+var CI=0;
+R.chal=function(){var c=C[CI];$("v").innerHTML='<div class="card"><p class="mut">'+c[0]+' אתגר '+(CI+1)+' מתוך '+C.length+'</p><h3>'+c[1]+'</h3><input type="number" step="any" id="ca" placeholder="התשובה שלכם"><div class="row"><button class="btn" onclick="chk()">בדיקה</button><button class="btn g" onclick="$(\'cf\').innerHTML=\'💡 \'+C[CI][3]">רמז</button><button class="btn g" onclick="sol()">פתרון</button></div><div id="cf"></div></div>'};
+function chk(){var c=C[CI],v=parseFloat($("ca").value),ok=Math.abs(v-c[2])<=Math.abs(c[2])*0.02;
+ if(ok){var f="c"+CI;if(!S.seen[f]){S.seen[f]=1;xp(10)}rec("אתגרים",1);$("cf").innerHTML='<div class="fb">✅ נכון! '+c[4]+'<div class="row">'+(CI<C.length-1?'<button class="btn" onclick="CI++;draw()">הבא ←</button>':"סיימתם את כל האתגרים 🎓")+'</div></div>'}
+ else{rec("אתגרים",0);$("cf").innerHTML='<div class="fb">❌ לא מדויק, נסו שוב. '+(M==0?"רמז: "+c[3]:"")+'</div>'}}
+function sol(){$("cf").innerHTML='<div class="fb">🧮 <span class=f>'+C[CI][4]+'</span></div>'}
+/* ---- quiz ---- */
+var QI=-1;
+R.quiz=function(){var n=QI;while(n==QI)n=Math.floor(Math.random()*Q.length);QI=n;var q=Q[n];
+ $("v").innerHTML='<div class="card"><p class="mut">נושא: '+q[0]+'</p><h3>'+q[1]+'</h3>'+q[2].map(function(o,i){return'<button class="opt" onclick="qa('+i+')">'+o+'</button>'}).join("")+'<div id="qf"></div></div>'};
+function qa(i){var q=Q[QI],ok=i==q[3];D.querySelectorAll(".opt").forEach(function(b,x){b.disabled=1;if(x==q[3])b.className="opt ok";else if(x==i)b.className="opt bad"});
+ rec(q[0],ok);if(ok)xp(3);$("qf").innerHTML='<div class="fb">'+(ok?"✅ נכון! (+3 XP) ":"❌ לא בדיוק. ")+(M==2?'<span class=f>'+q[5]+'</span>':q[4]+(M==1?' <span class=f>'+q[5]+'</span>':""))+'</div><div class="row"><button class="btn" onclick="draw()">שאלה הבאה</button></div>'}
+/* ---- tutor ---- */
+var TM=[],busy=0;
+R.tutor=function(){var h='<div class="card"><h2>🤖 Electricity Tutor</h2><p class="mut">שאלו כל שאלה. המורה יסביר עם דוגמה, יצייר מעגל קטן, וישאל שאלה אחת כדי לוודא שהבנתם.</p><div class="row">';
+ ["למה בחיבור מקביל המתח זהה?","מה זה קבוע זמן RC?","למה בבית משתמשים ב־AC?"].forEach(function(s){h+='<button class="btn g" onclick="tq(this.textContent)">'+s+'</button>'});
+ h+='</div></div><div id="log"></div><div class="card"><textarea id="ti" rows="2" placeholder="לא הבנתי למה..."></textarea><div class="row"><button class="btn" onclick="tq()">שלחו</button></div></div>';$("v").innerHTML=h;tl()};
+function tl(){var h="";TM.forEach(function(m){var p=m.content.split("```"),o="";p.forEach(function(s,i){o+=i%2?"<pre>"+esc(s.replace(/^\w*\n/,""))+"</pre>":esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>")});h+='<div class="m '+(m.role=="user"?"u":"a")+'">'+o+'</div>'});var e=$("log");if(e)e.innerHTML=h}
+async function tq(s){if(busy)return;var t=s||$("ti").value.trim();if(!t)return;
+ var sm=null;try{sm=window.claude&&await claude.use("sample")}catch(e){}
+ TM.push({role:"user",content:t});TM.push({role:"assistant",content:"..."});tl();if($("ti"))$("ti").value="";
+ if(!sm){TM[TM.length-1].content="המורה זמין רק כשהאפליקציה נפתחת בתוך claude.ai. בינתיים אפשר ללמוד בטאב Learn ולבדוק רעיונות במעבדה.";tl();return}
+ busy=1;var INS="אתה מורה חביב לחשמל והנדסת חשמל. ענה בעברית. אל תיתן רק תשובה יבשה. מבנה התשובה: 1) הסבר קצר עם דוגמה מהחיים. 2) מעגל קטן שמצויר באמנות ASCII בתוך בלוק קוד. 3) שאלה אחת בלבד לבדיקת הבנה, בלי לגלות את התשובה. כשהתלמיד עונה, תן משוב קצר והמשך. אורך: עד 150 מילים.",
+ LVL=["רמה: מתחיל, שפה פשוטה מאוד","רמה: סטודנט להנדסת חשמל","רמה: הראה גם נוסחאות וחישוב מתמטי מלא"][M];
+ var msgs=TM.slice(0,-1).map(function(m,i,a){var c=m.content;if(i==0)c=INS+"\n\n"+c;if(i==a.length-1)c+="\n\n["+LVL+"]";return{role:m.role,content:c}});
+ try{await sm(msgs,{cache:false,onText:function(x){TM[TM.length-1].content=x.text;tl()}});xp(2)}catch(e){TM[TM.length-1].content=e&&e.code=="not_granted"?"לא ניתנה הרשאה למורה.":"אירעה שגיאה, נסו שוב בעוד רגע."}
+ busy=0;tl()}
+/* ---- progress ---- */
+R.prog=function(){var l=lv(),p=(S.xp%15)/15*100,h='<div class="card"><h2>🏆 Level '+l+'</h2><div class="bar"><i style="width:'+p+'%"></i></div><p class="mut">'+S.xp+' XP · עוד '+(15-S.xp%15)+' XP לרמה הבאה</p></div><div class="card"><h3>נושאים</h3>';
+ var ks=Object.keys(S.st);if(!ks.length)h+='<p class="mut">עדיין אין נתונים. פתרו שאלות בטאב Quiz או Challenge.</p>';
+ ks.forEach(function(k){var o=S.st[k],a=Math.round(o.r/o.t*100),w=o.t>=2&&a<60;h+='<p>'+k+': '+o.r+'/'+o.t+' ('+a+'%) '+(w?"⚠️ כדאי לחזק":a>=80?"✅":"")+'</p><div class="bar"><i style="width:'+a+'%"></i></div>'});
+ var n=LS.filter(function(x,i){return S.seen["l"+i]}).length;h+='</div><div class="card"><p>שיעורים שהושלמו: <b>'+n+' מתוך '+LS.length+'</b></p></div>';$("v").innerHTML=h};
+shell();draw();
+</script></body></html>
